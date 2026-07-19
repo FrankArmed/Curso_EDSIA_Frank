@@ -142,3 +142,94 @@ class SensorAlarm:
     def is_alarm(self, value: float) -> bool:
         """Evalúa la lectura utilizando la regla configurada."""
         return self._rule.is_triggered(value)
+    
+
+
+# LSP: PRINCIPIO DE SUSTITUCIÓN DE LISKOV
+
+
+class BadNormalizedSensor(ABC):
+    """Contrato que promete una lectura normalizada entre 0.0 y 1.0."""
+
+    @abstractmethod
+    def read_normalized(self) -> float:
+        """Devuelve una lectura normalizada."""
+        raise NotImplementedError
+
+
+@dataclass(frozen=True)
+class BadValidNormalizedSensor(BadNormalizedSensor):
+    """Implementación que sí respeta el intervalo prometido."""
+
+    value: float
+
+    def __post_init__(self) -> None:
+        """Valida que el valor esté normalizado."""
+        if not 0.0 <= self.value <= 1.0:
+            raise ValueError("value debe estar entre 0.0 y 1.0")
+
+    def read_normalized(self) -> float:
+        """Devuelve la lectura normalizada."""
+        return self.value
+
+
+@dataclass(frozen=True)
+class BadRawAdcSensor(BadNormalizedSensor):
+    """Ejemplo incorrecto: devuelve ADC crudo en lugar de normalizado."""
+
+    raw_adc: int
+
+    def __post_init__(self) -> None:
+        """Valida que la lectura ADC pertenezca al intervalo permitido."""
+        if not 0 <= self.raw_adc <= ADC_MAX_VALUE:
+            raise ValueError("raw_adc debe estar entre 0 y 1023")
+
+    def read_normalized(self) -> float:
+        """Devuelve incorrectamente el valor ADC sin normalizar."""
+        return float(self.raw_adc)
+
+
+class NormalizedSensor(ABC):
+    """Contrato para sensores que siempre entregan valores normalizados."""
+
+    @abstractmethod
+    def read_normalized(self) -> float:
+        """Devuelve una lectura comprendida entre 0.0 y 1.0."""
+        raise NotImplementedError
+
+
+@dataclass(frozen=True)
+class FixedNormalizedSensor(NormalizedSensor):
+    """Sensor que contiene directamente una lectura normalizada."""
+
+    value: float
+
+    def __post_init__(self) -> None:
+        """Comprueba que la lectura respete el contrato."""
+        if not 0.0 <= self.value <= 1.0:
+            raise ValueError("value debe estar entre 0.0 y 1.0")
+
+    def read_normalized(self) -> float:
+        """Devuelve la lectura normalizada almacenada."""
+        return self.value
+
+
+@dataclass(frozen=True)
+class AdcNormalizedSensor(NormalizedSensor):
+    """Sensor que convierte una lectura ADC en un valor normalizado."""
+
+    raw_adc: int
+
+    def __post_init__(self) -> None:
+        """Valida que la lectura ADC sea correcta."""
+        if not 0 <= self.raw_adc <= ADC_MAX_VALUE:
+            raise ValueError("raw_adc debe estar entre 0 y 1023")
+
+    def read_normalized(self) -> float:
+        """Convierte el valor ADC al intervalo entre 0.0 y 1.0."""
+        return self.raw_adc / ADC_MAX_VALUE
+
+
+def normalized_percentage(sensor: NormalizedSensor) -> float:
+    """Convierte la lectura normalizada de cualquier sensor a porcentaje."""
+    return sensor.read_normalized() * 100.0
