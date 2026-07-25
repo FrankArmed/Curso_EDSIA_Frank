@@ -90,3 +90,26 @@ Se buscaron los comandos necesarios para ejecutar todos los tests, obtener cober
 Cobertura total: 91 %
 Ruff: sin errores
 Mypy: sin errores
+
+---
+
+# Semana 2
+
+## Entrada 1 — Revisión del Product Backlog 
+
+**Autor:** Frank Asael Méndez García  
+**Fecha:** 18/07/2026
+
+**Objetivo:**  
+Revisar que las historias del sistema IoT fueran claras y verificables.
+
+**Consulta realizada:**  
+Se solicitó revisar las historias, sus criterios Gherkin, story points y
+prioridades MoSCoW.
+
+**Cambios realizados:**  
+Se crearon historias con criterios observables y medibles.
+
+**Aprendizaje:**  
+Una historia debe expresar valor para una persona y sus criterios deben
+poder convertirse posteriormente en pruebas automáticas.
