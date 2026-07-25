@@ -551,7 +551,7 @@ el tamaño relativo, riesgo e incertidumbre de las historias.
 
 **Vista principal:** Sprint Board
 
-**Enlace:** PENDIENTE_DE_REEMPLAZAR_CON_EL_ENLACE_REAL
+**Enlace:** https://github.com/users/FrankArmed/projects/1/views/1
 
 ### Estados del tablero
 
