@@ -252,16 +252,16 @@ Registro propuesto:
 | Día | Trabajo terminado | Trabajo siguiente | Impedimento |
 |---|---|---|---|
 | Lunes | Estudio y tablero | Crear backlog | Ninguno |
-| Martes | Historias y Gherkin | Comenzar TDD | Pend |
-| Miércoles | Pend | Pend | Pend |
-| Jueves | Pend | Pend | Pend |
-| Viernes | Pend | Pend | Pend |
-| Sábado | Pend | Pend | Pend |
+| Martes | Historias y Gherkin | Comenzar TDD | Pendiente |
+| Miércoles | Pendiente | Pendiente | Pendiente |
+| Jueves | Pendiente | Pendiente | Pendiente |
+| Viernes | Pendiente | Pendiente | Pendiente |
+| Sábado | Pendiente | Cierre | Pendiente |
 
 ### 6.4 Sprint Review
 
 En la Sprint Review se inspecciona el resultado construido y se analiza
-qué hacer a continuación...
+qué hacer a continuación.
 
 #### Aplicación propuesta
 
@@ -275,6 +275,8 @@ Durante la revisión comprobaré:
 - Si la cobertura alcanza al menos 80 %.
 - Qué historias deben regresar al Product Backlog.
 
+La Sprint Review se enfoca en el producto y en el valor entregado.
+
 ### 6.5 Sprint Retrospective
 
 La Sprint Retrospective inspecciona cómo se realizó el trabajo y define
@@ -286,6 +288,9 @@ Se responderá:
 - ¿Qué salió mal o fue difícil?
 - ¿Qué se puede mejorar?
 - ¿Qué acción concreta se aplicará después?
+
+La retrospectiva se enfoca en el proceso, las personas, las herramientas
+y la forma de trabajar.
 
 ---
 
@@ -303,7 +308,9 @@ Contendrá:
 - Criterios de aceptación.
 - Valor de cada historia.
 
-### Product Goal
+#### Compromiso: Product Goal
+
+El Product Goal describe el estado futuro que se desea alcanzar.
 
 ### Product Goal del sistema
 
@@ -319,9 +326,11 @@ Contiene:
 - Las historias seleccionadas.
 - El plan de tareas para completar esas historias.
 
+Es un plan que puede adaptarse durante el Sprint si se mantiene el objetivo.
+
 #### Compromiso: Sprint Goal
 
-### Sprint Goal propuesto (aun sujeto a cambios)
+### Sprint Goal propuesto
 
 Construir mediante TDD el núcleo verificable de un sistema IoT que represente
 lecturas de sensores, detecte anomalías con umbrales configurables y emita
@@ -329,7 +338,12 @@ alertas usando estrategias intercambiables.
 
 ### 7.3 Increment
 
+Es la suma del trabajo terminado que cumple la Definition of Done y que
+puede utilizarse o inspeccionarse.
+
 #### Incremento esperado
+
+Al finalizar el Sprint se espera contar con:
 
 - `SensorReading`.
 - `AnomalyDetector`.
@@ -344,7 +358,7 @@ alertas usando estrategias intercambiables.
 
 #### Compromiso: Definition of Done
 
-La definition of ddone establecerá las condiciones obligatorias para
+La Definition of Done establecerá las condiciones obligatorias para
 considerar terminada una historia.
 
 ---
@@ -371,11 +385,15 @@ mejorarse el proceso.
 ### 8.3 Increment y entrega parcial sin terminar
 
 Un conjunto de archivos no es automáticamente un Increment. Para considerarlo
-Increment debe cumplir la Definition of Done y ser utilizable..
+Increment debe cumplir la Definition of Done y ser utilizable.
 
 ### 8.4 Scrum y una lista de tareas
 
-- Un objetivo.
+Una lista de tareas solo indica actividades pendientes.
+
+Scrum también define:
+
+- Un objetivo compartido.
 - Responsabilidades.
 - Eventos de inspección y adaptación.
 - Artefactos transparentes.
@@ -387,10 +405,24 @@ Increment debe cumplir la Definition of Done y ser utilizable..
 ## 9. Aplicación de Scrum siendo un solo desarrollador
 
 Aunque el proyecto se realizará individualmente, separaré las tres
-responsabilidades mentalmente. Cuando priorice valor actuaré como Owner.
+responsabilidades mentalmente.
+
+Cuando priorice valor actuaré como Product Owner.
+
 Cuando revise el proceso, los impedimentos y la Definition of Done actuaré
-como Scrum Master. Cuando escriba tests, código, documentación y pull requests actuaré como
+como Scrum Master.
+
+Cuando escriba tests, código, documentación y pull requests actuaré como
 Developer.
+
+Esta separación ayudará a no confundir:
+
+- Lo más valioso para el usuario.
+- La forma correcta de organizar el proceso.
+- La solución técnica que debe implementarse.
+
+No se pretende simular que existen tres personas diferentes, sino aplicar
+las responsabilidades de manera consciente.
 
 ---
 
@@ -419,6 +451,8 @@ el administrador principal.
 ---
 
 ## 11. Supuestos iniciales del proyecto
+
+Para delimitar el Sprint se utilizarán los siguientes supuestos:
 
 - Cada lectura pertenece a un sensor identificado.
 - La humedad válida se encuentra entre 0 y 100 %.
@@ -549,25 +583,49 @@ La historia cumple todos los criterios y la Definition of Done.
 
 ---
 
-## 15. Reflexión personal (pendiente)
+## 15. Reflexión personal
 
 ### ¿Qué concepto de Scrum me pareció más importante?
 
-
+El concepto más importante fue que una historia no está terminada solamente
+porque el código funciona. Debe cumplir una definición de calidad compartida
+y producir un resultado utilizable.
 
 ### ¿Qué diferencia encontré entre Scrum y una lista de tareas?
 
-
+Una lista de tareas muestra actividades. Scrum conecta las actividades con
+un objetivo, valor para el producto, revisión frecuente y mejora continua.
 
 ### ¿Cómo aplicaré Scrum siendo el único desarrollador?
 
-
+Separaré la priorización, la revisión del proceso y la implementación.
+Además, utilizaré Issues, un tablero, ramas, pull requests y una
+retrospectiva para conservar evidencia del proceso.
 
 ### ¿Qué espero mejorar durante la semana?
 
-
+Espero mejorar la precisión de mis historias de usuario, aprender a escribir
+tests antes del código y justificar las decisiones tomadas durante el Sprint.
 
 ### ¿Cuál será la principal dificultad?
 
+La principal dificultad será evitar adelantar la implementación antes de
+confirmar el fallo del test. Para reducir este riesgo, cada commit de test
+deberá aparecer antes que su correspondiente commit de código.
 
 ---
+
+## 16. Checklist de aprendizaje
+
+- [x] Identifiqué las tres responsabilidades.
+- [x] Identifiqué los cinco eventos.
+- [x] Identifiqué los tres artefactos.
+- [x] Relacioné cada artefacto con su compromiso.
+- [x] Identifiqué los cinco valores.
+- [x] Identifiqué los tres pilares.
+- [x] Diferencié Sprint Review y Sprint Retrospective.
+- [x] Diferencié Product Backlog y Sprint Backlog.
+- [x] Definí cómo aplicar Scrum individualmente.
+- [ ] Agregué el enlace real del GitHub Project.
+- [ ] Verifiqué que el Project sea público.
+- [ ] Verifiqué que aparezca en el repositorio.
