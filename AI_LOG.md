@@ -84,14 +84,13 @@ Se buscaron los comandos necesarios para ejecutar todos los tests, obtener cober
 
 **Resultados obtenidos:**
 
-```text
 42 tests de Semana 1 aprobados
 43 tests aprobados incluyendo Semana 0
 Cobertura total: 91 %
 Ruff: sin errores
 Mypy: sin errores
 
----
+--- 
 
 # Semana 2
 
@@ -113,3 +112,67 @@ Se crearon historias con criterios observables y medibles.
 **Aprendizaje:**  
 Una historia debe expresar valor para una persona y sus criterios deben
 poder convertirse posteriormente en pruebas automáticas.
+
+## Entrada 2 — Aplicación de TDD estricto
+
+**Autor:** Frank Asael Méndez García  
+**Fecha:** 18/07/2026
+
+**Objetivo:**  
+Aplicar correctamente el ciclo Red, Green y Refactor en los componentes
+principales de la Evaluación 1.
+
+**Consulta realizada:**  
+Se solicitó una guía paso a paso para escribir primero las pruebas de
+`SensorReading`, `AnomalyDetector` y `AlertManager`.
+
+**Resultado recibido:**  
+Se propuso crear una rama por componente, escribir el test antes del archivo
+de producción, ejecutar el fallo esperado y conservar commits separados.
+
+**Decisiones tomadas:**  
+Se mantuvo una implementación sencilla con clases pequeñas, validaciones
+básicas y dependencias entregadas mediante el constructor.
+
+**Cambios realizados:**  
+Se crearon commits `test` antes de los commits `feat` y se utilizaron pull
+requests para incorporar los cambios a `main`.
+
+**Aprendizaje:**  
+TDD no consiste en escribir pruebas después de programar. El test debe
+definir primero el comportamiento y fallar por una razón conocida.
+
+---
+
+## Entrada 3 — Revisión de ramas, pruebas y cobertura
+
+**Autor:** Frank Asael Méndez García  
+**Fecha:** 18/07/2026
+
+**Objetivo:**  
+Comprobar que todos los componentes estuvieran realmente integrados en
+`main` y cumplieran los requisitos de calidad.
+
+**Problema encontrado:**  
+Pytest encontró solamente cuatro pruebas porque los pull requests de
+`SensorReading` y `AnomalyDetector` seguían abiertos.
+
+**Consulta realizada:**  
+Se pidió identificar por qué los tests existían en el historial, pero no
+aparecían al ejecutar las pruebas desde `main`.
+
+**Resultado recibido:**  
+Se revisaron las ramas, los commits y el estado de los pull requests. Después
+se fusionaron las tres ramas en el orden correcto.
+
+**Cambios realizados:**  
+Se actualizaron los pull requests, se sincronizó `main` y se ejecutaron
+pytest, Ruff, mypy y pytest-cov.
+
+**Resultados finales:**
+
+```text
+56 tests aprobados
+Cobertura de Semana 2: 99 %
+Ruff: sin errores
+Mypy: sin errores
