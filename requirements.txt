@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+pytest
+pytest-cov
+httpx
+ruff
+mypy

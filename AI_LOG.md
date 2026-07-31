@@ -171,8 +171,36 @@ pytest, Ruff, mypy y pytest-cov.
 
 **Resultados finales:**
 
-```text
+
 56 tests aprobados
 Cobertura de Semana 2: 99 %
 Ruff: sin errores
 Mypy: sin errores
+
+---
+
+# Semana 3
+
+## Entrada 1 — Estructura inicial de la API SensorHub
+
+**Autor:** Frank Asael Méndez García  
+**Fecha:** 30/07/2026
+
+**Objetivo:**  
+Crear una API inicial con FastAPI respetando la nueva estructura oficial
+del repositorio.
+
+**Consulta realizada:**  
+Se solicitó una estructura sencilla y ordenada junto con Swagger y pruebas con TestClient.
+
+**Decisión tomada:**  
+Se separaron la aplicación principal, el router y los esquemas Pydantic.
+Las lecturas se almacenaron temporalmente en memoria porque la persistencia
+con SQLAlchemy corresponde a la actividad del martes.
+
+**Cambios realizados:**  
+Se crearon con ayuda de la IA `app/`, `tests/`, los endpoints iniciales y pruebas automáticas.
+
+**Aprendizaje:**  
+FastAPI utiliza los tipos y modelos Pydantic para validar datos y generar
+automáticamente la documentación de los endpoints.
