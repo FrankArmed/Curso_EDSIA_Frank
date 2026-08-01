@@ -8,15 +8,19 @@ from app.schemas.sensor import SensorCreate
 
 
 class SensorAlreadyExistsError(Exception):
-    """Error utilizado cuando el sensor ya existe."""
+    """Indica que el sensor ya existe."""
+
+
+class SensorNotFoundError(Exception):
+    """Indica que el sensor no existe."""
 
 
 class InvalidSensorUnitError(Exception):
-    """Error utilizado cuando la unidad no coincide con el tipo."""
+    """Indica que la unidad es incorrecta."""
 
 
 class SensorService:
-    """Comprueba las reglas antes de guardar un sensor."""
+    """Valida y administra sensores."""
 
     def __init__(self, repository: SensorRepository) -> None:
         """Recibe el repositorio de sensores."""
@@ -31,7 +35,6 @@ class SensorService:
                 f"El sensor {data.id} ya existe"
             )
 
-        # Cada tipo de sensor utiliza una unidad específica.
         expected_unit = "C"
 
         if data.sensor_type == "humidity":
@@ -50,6 +53,21 @@ class SensorService:
 
         return self.repository.create(sensor)
 
-    def list_sensors(self) -> list[Sensor]:
-        """Solicita todos los sensores al repositorio."""
-        return self.repository.list_all()
+    def get_sensor(self, sensor_id: str) -> Sensor:
+        """Devuelve un sensor existente."""
+        sensor = self.repository.get_by_id(sensor_id)
+
+        if sensor is None:
+            raise SensorNotFoundError(
+                f"El sensor {sensor_id} no existe"
+            )
+
+        return sensor
+
+    def list_sensors(
+        self,
+        offset: int,
+        limit: int,
+    ) -> list[Sensor]:
+        """Devuelve sensores paginados."""
+        return self.repository.list_all(offset, limit)

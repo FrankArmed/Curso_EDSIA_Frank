@@ -2,7 +2,9 @@
 
 # Frank Asael Méndez García - 31/07/2026
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from datetime import datetime
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.db import get_db
@@ -11,71 +13,108 @@ from app.repositories.reading_repository import ReadingRepository
 from app.repositories.sensor_repository import SensorRepository
 from app.schemas.reading import ReadingCreate, ReadingResponse
 from app.services.reading_service import (
+    InvalidDateRangeError,
     InvalidReadingError,
+    ReadingNotFoundError,
     ReadingService,
     SensorNotFoundError,
 )
 
-# Agrupa las rutas relacionadas con lecturas.
+# Agrupa las rutas de lecturas.
 router = APIRouter(
     prefix="/readings",
     tags=["readings"],
 )
 
 
+def create_service(session: Session) -> ReadingService:
+    """Crea el servicio de lecturas."""
+    reading_repository = ReadingRepository(session)
+    sensor_repository = SensorRepository(session)
+
+    return ReadingService(
+        reading_repository,
+        sensor_repository,
+    )
+
+
 @router.post(
     "",
     response_model=ReadingResponse,
-    status_code=status.HTTP_201_CREATED,
+    status_code=201,
 )
 def create_reading(
     data: ReadingCreate,
     session: Session = Depends(get_db),
 ) -> Reading:
     """Crea una lectura nueva."""
-
-    # Repositorios que acceden a la base de datos.
-    reading_repository = ReadingRepository(session)
-    sensor_repository = SensorRepository(session)
-
-    # Servicio que valida y guarda la lectura.
-    service = ReadingService(
-        reading_repository,
-        sensor_repository,
-    )
+    service = create_service(session)
 
     try:
         return service.create_reading(data)
 
     except SensorNotFoundError as error:
-        # Devuelve 404 si el sensor no existe.
+        # El sensor indicado no existe.
         raise HTTPException(
             status_code=404,
             detail=str(error),
         ) from error
 
     except InvalidReadingError as error:
-        # Devuelve 400 si la lectura no es válida.
+        # La unidad o el valor no son válidos.
         raise HTTPException(
             status_code=400,
             detail=str(error),
         ) from error
 
 
-@router.get("", response_model=list[ReadingResponse])
+@router.get(
+    "",
+    response_model=list[ReadingResponse],
+)
 def list_readings(
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, ge=1, le=100),
+    start_date: datetime | None = None,
+    end_date: datetime | None = None,
     session: Session = Depends(get_db),
 ) -> list[Reading]:
-    """Devuelve todas las lecturas."""
+    """Devuelve lecturas paginadas y filtradas."""
+    service = create_service(session)
 
-    # Crea los repositorios y el servicio.
-    reading_repository = ReadingRepository(session)
-    sensor_repository = SensorRepository(session)
+    try:
+        return service.list_readings(
+            offset,
+            limit,
+            start_date,
+            end_date,
+        )
 
-    service = ReadingService(
-        reading_repository,
-        sensor_repository,
-    )
+    except InvalidDateRangeError as error:
+        # La fecha inicial es posterior a la final.
+        raise HTTPException(
+            status_code=400,
+            detail=str(error),
+        ) from error
 
-    # Consulta las lecturas guardadas.
-    return service.list_readings()  # Easter egg
+
+@router.get(
+    "/{reading_id}",
+    response_model=ReadingResponse,
+)
+def get_reading(
+    reading_id: int,
+    session: Session = Depends(get_db),
+) -> Reading:
+    """Devuelve una lectura por su ID."""
+    service = create_service(session)
+
+    try:
+        return service.get_reading(reading_id)
+
+    except ReadingNotFoundError as error:
+        # La lectura solicitada no existe.
+        raise HTTPException(
+            status_code=404,
+            detail=str(error),
+        ) from error ##Easter egg 

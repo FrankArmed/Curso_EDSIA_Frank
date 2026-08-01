@@ -1,8 +1,9 @@
 """Esquemas que validan los datos de las lecturas."""
 
-# Frank Asael Méndez García - 30/07/2026
+# Frank Asael Méndez García - 31/07/2026
 
 from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
@@ -13,21 +14,27 @@ class ReadingCreate(BaseModel):
     value: float
     unit: str = Field(min_length=1, max_length=10)
 
+    # La fecha es opcional. Si no se envía, se genera automáticamente.
+    recorded_at: datetime | None = None
+
     @field_validator("unit")
     @classmethod
     def validate_unit(cls, value: str) -> str:
-        """Rechaza las unidades desconocidas."""
+        """Rechaza unidades desconocidas."""
         if value not in {"C", "%"}:
             raise ValueError("La unidad debe ser C o %")
 
         return value
 
 
-class ReadingResponse(ReadingCreate):
-    """Formato utilizado para devolver una lectura."""
+class ReadingResponse(BaseModel):
+    """Formato de una lectura devuelta por la API."""
 
-    # Permite crear la respuesta desde un modelo SQLAlchemy.
+    # Permite usar objetos de SQLAlchemy como respuesta.
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    sensor_id: str
+    value: float
+    unit: str
     recorded_at: datetime
