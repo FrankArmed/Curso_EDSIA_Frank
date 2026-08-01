@@ -204,3 +204,25 @@ Se crearon con ayuda de la IA `app/`, `tests/`, los endpoints iniciales y prueba
 **Aprendizaje:**  
 FastAPI utiliza los tipos y modelos Pydantic para validar datos y generar
 automáticamente la documentación de los endpoints.
+
+## Entrada 2 — SQLAlchemy
+
+**Autor:** Frank Asael Méndez García  
+**Fecha:** 31/07/2026
+
+**Objetivo:**  
+Crear la base de persistencia de SensorHub.
+
+**Consulta realizada:**  
+Se solicitó una implementación de modelos para sensores y lecturas.
+
+**Decisión tomada:**  
+Se utilizaron `DeclarativeBase`, `Mapped`, `mapped_column` y `select`.
+
+**Cambios realizados:**  
+Se configuró `app/db.py`, se crearon los modelos `Sensor` y `Reading`,
+y se añadieron pruebas con bases temporales.
+
+**Aprendizaje:**  
+Un modelo ORM representa una tabla mediante una clase de Python. La sesión
+permite agregar objetos, confirmar cambios y consultar los datos guardados.

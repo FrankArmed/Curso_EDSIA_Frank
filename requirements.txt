@@ -4,6 +4,6 @@ sqlalchemy
 pydantic
 pytest
 pytest-cov
-httpx
+httpx2
 ruff
 mypy
