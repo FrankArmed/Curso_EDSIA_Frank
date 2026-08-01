@@ -1,6 +1,6 @@
-"""Esquemas que validan los datos de los sensores."""
+"""Esquemas de entrada y salida para sensores."""
 
-# Frank Asael Méndez García - 30/07/2026
+# Frank Asael Méndez García - 01/08/2026
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -15,10 +15,8 @@ class SensorCreate(BaseModel):
     @field_validator("sensor_type")
     @classmethod
     def validate_sensor_type(cls, value: str) -> str:
-        """Acepta solamente los tipos de sensor conocidos."""
-        allowed_types = {"temperature", "humidity"}
-
-        if value not in allowed_types:
+        """Valida el tipo de sensor."""
+        if value not in {"temperature", "humidity"}:
             raise ValueError("El tipo debe ser temperature o humidity")
 
         return value
@@ -26,17 +24,57 @@ class SensorCreate(BaseModel):
     @field_validator("unit")
     @classmethod
     def validate_unit(cls, value: str) -> str:
-        """Acepta solamente las unidades utilizadas por el proyecto."""
-        allowed_units = {"C", "%"}
-
-        if value not in allowed_units:
+        """Valida la unidad."""
+        if value not in {"C", "%"}:
             raise ValueError("La unidad debe ser C o %")
 
         return value
 
 
-class SensorResponse(SensorCreate):
-    """Formato utilizado para devolver un sensor."""
+class SensorUpdate(BaseModel):
+    """Datos opcionales para actualizar un sensor."""
 
-    # Permite convertir un objeto SQLAlchemy en una respuesta Pydanticc.
+    sensor_type: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=20,
+    )
+    unit: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=10,
+    )
+
+    @field_validator("sensor_type")
+    @classmethod
+    def validate_sensor_type(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        """Valida el tipo cuando fue enviado."""
+        if value is not None:
+            if value not in {"temperature", "humidity"}:
+                raise ValueError(
+                    "El tipo debe ser temperature o humidity"
+                )
+
+        return value
+
+    @field_validator("unit")
+    @classmethod
+    def validate_unit(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        """Valida la unidad cuando fue enviada."""
+        if value is not None:
+            if value not in {"C", "%"}:
+                raise ValueError("La unidad debe ser C o %")
+
+        return value
+
+
+class SensorResponse(SensorCreate):
+    """Formato de un sensor devuelto por la API."""
+
     model_config = ConfigDict(from_attributes=True)
