@@ -1,6 +1,6 @@
 """Configuración compartida para las pruebas."""
 
-# Frank Asael Méndez García - 31/07/2026
+# Frank Asael Méndez García - 01/08/2026
 
 from collections.abc import Generator
 from pathlib import Path
@@ -10,15 +10,13 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.db import Base, get_db
+from app.db import Base, engine, get_db
 from app.main import app
 
 
 @pytest.fixture
 def client(tmp_path: Path) -> Generator[TestClient, None, None]:
     """Crea un cliente con una base temporal."""
-
-    # Crea una base diferente para cada prueba.
     database_path = tmp_path / "sensorhub_test.db"
 
     test_engine = create_engine(
@@ -26,27 +24,32 @@ def client(tmp_path: Path) -> Generator[TestClient, None, None]:
         connect_args={"check_same_thread": False},
     )
 
-    # Crea sesiones conectadas a la base temporal.
-    TestSession = sessionmaker(
+    test_session_factory = sessionmaker(
         bind=test_engine,
         autoflush=False,
         expire_on_commit=False,
     )
 
-    # Crea las tablas necesarias.
     Base.metadata.create_all(bind=test_engine)
 
     def override_get_db() -> Generator[Session, None, None]:
         """Entrega una sesión temporal."""
-        with TestSession() as session:
+        with test_session_factory() as session:
             yield session
 
-    # Sustituye la base real durante las pruebas.
     app.dependency_overrides[get_db] = override_get_db
 
-    with TestClient(app) as test_client:
-        yield test_client
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.dependency_overrides.clear()
+        Base.metadata.drop_all(bind=test_engine)
+        test_engine.dispose()
 
-    # Limpia la configuración al finalizar.
-    app.dependency_overrides.clear()
-    Base.metadata.drop_all(bind=test_engine)
+
+@pytest.fixture(scope="session", autouse=True)
+def close_main_engine() -> Generator[None, None, None]:
+    """Cierra el motor principal al terminar pytest."""
+    yield
+    engine.dispose()
