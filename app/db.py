@@ -1,22 +1,21 @@
 """Configuración de la base de datos de SensorHub."""
 
-# Frank Asael Méndez García - 30/07/2026
+# Frank Asael Méndez García - 01/08/2026
 
 from collections.abc import Generator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-# SQLite guardará los datos en sensorhub.db, en la raíz del proyecto.
 DATABASE_URL = "sqlite:///./sensorhub.db"
 
-# Esta opción permite que FastAPI use SQLite desde diferentes hilos.
+# Conexión con la base SQLite.
 engine = create_engine(
     DATABASE_URL,
     connect_args={"check_same_thread": False},
 )
 
-# SessionLocal crea sesiones para leer y guardar datos.
+# Crea nuevas sesiones.
 SessionLocal = sessionmaker(
     bind=engine,
     autoflush=False,
@@ -25,10 +24,14 @@ SessionLocal = sessionmaker(
 
 
 class Base(DeclarativeBase):
-    """Clase base de todos los modelos de SQLAlchemy."""
+    """Base utilizada por los modelos."""
 
 
 def get_db() -> Generator[Session, None, None]:
-    """Entrega una sesión y la cierra al terminar la petición."""
-    with SessionLocal() as session:
+    """Entrega y cierra una sesión."""
+    session = SessionLocal()
+
+    try:
         yield session
+    finally:
+        session.close()

@@ -1,6 +1,6 @@
 """Acceso a las lecturas almacenadas."""
 
-# Frank Asael Méndez García - 31/07/2026
+# Frank Asael Méndez García - 01/08/2026
 
 from datetime import datetime
 
@@ -11,10 +11,10 @@ from app.models import Reading
 
 
 class ReadingRepository:
-    """Realiza operaciones sobre la tabla readings."""
+    """Realiza operaciones sobre readings."""
 
     def __init__(self, session: Session) -> None:
-        """Guarda la sesión de base de datos."""
+        """Guarda la sesión."""
         self.session = session
 
     def create(self, reading: Reading) -> Reading:
@@ -26,29 +26,30 @@ class ReadingRepository:
         return reading
 
     def get_by_id(self, reading_id: int) -> Reading | None:
-        """Busca una lectura por su identificador."""
+        """Busca una lectura por ID."""
         return self.session.get(Reading, reading_id)
 
-    def list_all(
+    def list_for_sensor(
         self,
-        offset: int = 0,
-        limit: int = 20,
-        start_date: datetime | None = None,
-        end_date: datetime | None = None,
+        sensor_id: str,
+        offset: int,
+        limit: int,
+        from_date: datetime | None,
+        to_date: datetime | None,
     ) -> list[Reading]:
-        """Devuelve lecturas paginadas y filtradas."""
-        statement = select(Reading)
+        """Lista lecturas de un sensor."""
+        statement = select(Reading).where(
+            Reading.sensor_id == sensor_id
+        )
 
-        # Aplica la fecha inicial cuando fue enviada.
-        if start_date is not None:
+        if from_date is not None:
             statement = statement.where(
-                Reading.recorded_at >= start_date
+                Reading.recorded_at >= from_date
             )
 
-        # Aplica la fecha final cuando fue enviada.
-        if end_date is not None:
+        if to_date is not None:
             statement = statement.where(
-                Reading.recorded_at <= end_date
+                Reading.recorded_at <= to_date
             )
 
         statement = (
@@ -58,6 +59,16 @@ class ReadingRepository:
             .limit(limit)
         )
 
-        readings = self.session.scalars(statement)
+        return list(self.session.scalars(statement))
 
-        return list(readings)
+    def save(self, reading: Reading) -> Reading:
+        """Guarda los cambios de una lectura."""
+        self.session.commit()
+        self.session.refresh(reading)
+
+        return reading
+
+    def delete(self, reading: Reading) -> None:
+        """Elimina una lectura."""
+        self.session.delete(reading)
+        self.session.commit()
