@@ -1,23 +1,28 @@
-"""Aplicación principal de la API SensorHub."""
+"""Aplicación principal de SensorHub."""
 
-# Frank Asael Méndez García - 18/07/2026
+# Frank Asael Méndez García - 31/07/2026
 
 from fastapi import FastAPI
 
-from app.routers import readings
+from app.db import Base, engine
+from app.routers import readings, sensors
 
-## Este objeto representa la aplicación completa de FastAPI.
+# Crea las tablas si todavía no existen.
+Base.metadata.create_all(bind=engine)
+
+# Crea la aplicación de FastAPI.
 app = FastAPI(
     title="SensorHub API",
-    description="API para registrar y consultar lecturas de sensores.",
-    version="0.1.0",
+    description="API para administrar sensores y lecturas.",
+    version="0.2.0",
 )
 
-## Eto conecta las rutas de lecturas con la aplicación principal.
+# Agrega los endpoints de sensores y lecturas.
+app.include_router(sensors.router)
 app.include_router(readings.router)
 
 
 @app.get("/health", tags=["health"])
 def health() -> dict[str, str]:
-    """Confirma que la API está funcionando."""
+    """Comprueba que la API está funcionando."""
     return {"status": "ok"}
