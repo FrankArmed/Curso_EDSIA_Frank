@@ -1,7 +1,8 @@
-"""Reglas sencillas relacionadas con las lecturas."""
+"""Reglas relacionadas con las lecturas."""
 
-# Frank Asael Méndez García - 18/07/2026
-# Archivo: reading_service.py
+# Frank Asael Méndez García - 31/07/2026
+
+from datetime import datetime
 
 from app.models import Reading
 from app.repositories.reading_repository import ReadingRepository
@@ -10,15 +11,23 @@ from app.schemas.reading import ReadingCreate
 
 
 class SensorNotFoundError(Exception):
-    """Error utilizado cuando el sensor no existe."""
+    """Indica que el sensor no existe."""
+
+
+class ReadingNotFoundError(Exception):
+    """Indica que la lectura no existe."""
 
 
 class InvalidReadingError(Exception):
-    """Error utilizado cuando una lectura no es válida."""
+    """Indica que la lectura no es válida."""
+
+
+class InvalidDateRangeError(Exception):
+    """Indica que el rango de fechas es incorrecto."""
 
 
 class ReadingService:
-    """Comprueba las reglas antes de guardar una lectura."""
+    """Valida y administra lecturas."""
 
     def __init__( ##Apartado del codigo hecho con ayuda de la IA.
         self,
@@ -43,18 +52,16 @@ class ReadingService:
                 f"La unidad debe ser {sensor.unit}"
             )
 
-        # Rango físico utilizado para sensores de temperatura.
         if sensor.sensor_type == "temperature":
             if data.value < -40 or data.value > 125:
                 raise InvalidReadingError(
                     "La temperatura debe estar entre -40 y 125"
                 )
 
-        # Rango físico utilizado para sensores de humedad.
         if sensor.sensor_type == "humidity":
             if data.value < 0 or data.value > 100:
                 raise InvalidReadingError(
-                    "La humedad debe estar entre 0 y 100"
+                    "La humedad debe estar entre 0 y 100" ##Fin del apartado del codigo hecho con ayuda de la IA. 
                 )
 
         reading = Reading(
@@ -63,8 +70,43 @@ class ReadingService:
             unit=data.unit,
         )
 
+        # Usa la fecha enviada cuando está disponible.
+        if data.recorded_at is not None:
+            reading.recorded_at = data.recorded_at
+
         return self.reading_repository.create(reading)
 
-    def list_readings(self) -> list[Reading]:
-        """Solicita todas las lecturas al repositorio."""
-        return self.reading_repository.list_all()
+    def get_reading(self, reading_id: int) -> Reading:
+        """Devuelve una lectura existente."""
+        reading = self.reading_repository.get_by_id(reading_id)
+
+        if reading is None:
+            raise ReadingNotFoundError(
+                f"La lectura {reading_id} no existe"
+            )
+
+        return reading
+
+    def list_readings(
+        self,
+        offset: int,
+        limit: int,
+        start_date: datetime | None,
+        end_date: datetime | None,
+    ) -> list[Reading]:
+        """Devuelve lecturas paginadas y filtradas."""
+        if (
+            start_date is not None
+            and end_date is not None
+            and start_date > end_date
+        ):
+            raise InvalidDateRangeError(
+                "La fecha inicial no puede ser posterior a la final"
+            )
+
+        return self.reading_repository.list_all(
+            offset=offset,
+            limit=limit,
+            start_date=start_date,
+            end_date=end_date,
+        )
