@@ -26,14 +26,17 @@ from app.services.sensor_service import (
     SensorService,
 )
 
+# Agrupa todos los endpoints relacionados con sensores.
 router = APIRouter(
     prefix="/sensors",
     tags=["sensors"],
 )
 
 
-def create_service(session: Session) -> SensorService:
-    """Crea el servicio de sensores."""
+def get_sensor_service(
+    session: Session = Depends(get_db),
+) -> SensorService:
+    """Crea el servicio que utilizarán los endpoints de sensores."""
     repository = SensorRepository(session)
     return SensorService(repository)
 
@@ -45,11 +48,9 @@ def create_service(session: Session) -> SensorService:
 )
 def create_sensor(
     data: SensorCreate,
-    session: Session = Depends(get_db),
+    service: SensorService = Depends(get_sensor_service),
 ) -> Sensor:
-    """Crea un sensor."""
-    service = create_service(session)
-
+    """Crea un sensor nuevo."""
     try:
         return service.create_sensor(data)
     except SensorAlreadyExistsError as error:
@@ -62,10 +63,9 @@ def create_sensor(
 def list_sensors(
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=20, ge=1, le=100),
-    session: Session = Depends(get_db),
+    service: SensorService = Depends(get_sensor_service),
 ) -> list[Sensor]:
-    """Lista sensores."""
-    service = create_service(session)
+    """Devuelve una lista paginada de sensores."""
     return service.list_sensors(offset, limit)
 
 
@@ -75,11 +75,9 @@ def list_sensors(
 )
 def get_sensor(
     sensor_id: str,
-    session: Session = Depends(get_db),
+    service: SensorService = Depends(get_sensor_service),
 ) -> Sensor:
-    """Consulta un sensor."""
-    service = create_service(session)
-
+    """Consulta un sensor mediante su identificador."""
     try:
         return service.get_sensor(sensor_id)
     except SensorNotFoundError as error:
@@ -93,11 +91,9 @@ def get_sensor(
 def update_sensor(
     sensor_id: str,
     data: SensorUpdate,
-    session: Session = Depends(get_db),
+    service: SensorService = Depends(get_sensor_service),
 ) -> Sensor:
-    """Actualiza un sensor."""
-    service = create_service(session)
-
+    """Actualiza parcialmente los datos de un sensor."""
     try:
         return service.update_sensor(sensor_id, data)
     except SensorNotFoundError as error:
@@ -113,13 +109,11 @@ def update_sensor(
 )
 def delete_sensor(
     sensor_id: str,
-    session: Session = Depends(get_db),
+    service: SensorService = Depends(get_sensor_service),
 ) -> Response:
-    """Elimina un sensor."""
-    service = create_service(session)
-
+    """Elimina un sensor mediante su identificador."""
     try:
         service.delete_sensor(sensor_id)
         return Response(status_code=204)
     except SensorNotFoundError as error:
-        raise HTTPException(404, str(error)) from error ##Easter egg
+        raise HTTPException(404, str(error)) from error
