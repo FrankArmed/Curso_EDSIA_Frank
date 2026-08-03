@@ -226,3 +226,59 @@ y se añadieron pruebas con bases temporales.
 **Aprendizaje:**  
 Un modelo ORM representa una tabla mediante una clase de Python. La sesión
 permite agregar objetos, confirmar cambios y consultar los datos guardados.
+
+## Entrada 3 — Preparación de la revisión por pares
+
+**Autor:** Frank Asael Méndez García  
+**Fecha:** 01/08/2026
+
+**Objetivo:**  
+Preparar SensorHub para la revisión por pares de la Semana 3.
+
+**Consulta realizada:**  
+Se revisó la cobertura, el cierre de sesiones, el uso de repositorios fake
+y las instrucciones necesarias para ejecutar el proyecto.
+
+**Decisión tomada:**  
+Se mantuvo `db.py` compacto y se agregó una prueba específica para comprobar
+el cierre de la sesión. También se añadieron repositorios fake para probar
+los servicios sin SQLite.
+
+**Cambios realizados:**  
+Se mejoró la limpieza de las bases temporales, se documentó la arquitectura,
+se completó el README y se configuró la cobertura mínima del 80 %.
+
+**Resultado:**  
+
+- Todas las pruebas pasan.
+- Cobertura superior al 80 %.
+- Ruff limpio.
+- Mypy limpio.
+- Swagger funcional.
+
+**Aprendizaje:**  
+La cobertura debe mejorarse mediante pruebas útiles y no eliminando código
+necesario solamente para aumentar el porcentaje.
+
+## Entrada — Revisión por pares de la Semana 3
+
+**Repositorio revisado:** sdlc-electronica-Luis-Reyes
+
+**Comprobaciones realizadas:**  
+Se probaron Swagger, salud, creación y listado de lecturas, paginación,
+filtros por fecha y cobertura automática.
+
+**Resultados:**  
+Se aprobaron tests y se obtuvo una cobertura total del 91 %.
+
+**Observaciones realizadas:**  
+La API acepta un identificador de sensor vacío y no incorpora el tipo ni
+la unidad del sensor para realizar una validación física completa.
+
+**Pregunta realizada:**  
+Se preguntó qué criterio se utilizó para configurar y aplicar los límites
+de anomalía.
+
+**Aprendizaje:**  
+La cobertura alta no garantiza que todos los comportamientos sean
+correctos; las pruebas manuales permitieron detectar un caso no validado.
