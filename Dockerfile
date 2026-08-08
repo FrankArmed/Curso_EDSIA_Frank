@@ -17,6 +17,10 @@ RUN python -m pip install --no-cache-dir -r requirements.txt
 # Copia el código de la aplicación.
 COPY app ./app
 
+# Copia la configuración y las migraciones de la base de datos.
+COPY alembic.ini .
+COPY migrations ./migrations
+
 # Documenta el puerto utilizado por FastAPI.
 EXPOSE 8000
 
