@@ -1,21 +1,52 @@
 """Configuración de la base de datos de SensorHub."""
 
-# Frank Asael Méndez García - 01/08/2026
+# Frank Asael Méndez García - 07/08/2026
 
+import os
 from collections.abc import Generator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-DATABASE_URL = "sqlite:///./sensorhub.db"
 
-# Conexión con la base SQLite.
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False},
-)
+def get_database_url() -> str:
+    """Obtiene la conexión desde el entorno o usa SQLite local."""
+    url = os.getenv(
+        "DATABASE_URL",
+        "sqlite:///./sensorhub.db",
+    )
 
-# Crea nuevas sesiones.
+    # Algunos proveedores usan postgres://.
+    if url.startswith("postgres://"):
+        return url.replace(
+            "postgres://",
+            "postgresql+psycopg://",
+            1,
+        )
+
+    # Agrega el driver psycopg cuando sea necesario.
+    if url.startswith("postgresql://") and "+psycopg" not in url:
+        return url.replace(
+            "postgresql://",
+            "postgresql+psycopg://",
+            1,
+        )
+
+    return url
+
+
+DATABASE_URL = get_database_url()
+
+# SQLite necesita esta opción; PostgreSQL no.
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={"check_same_thread": False},
+    )
+else:
+    engine = create_engine(DATABASE_URL)
+
+# Crea nuevas sesiones para trabajar con la base de datos.
 SessionLocal = sessionmaker(
     bind=engine,
     autoflush=False,
@@ -28,7 +59,7 @@ class Base(DeclarativeBase):
 
 
 def get_db() -> Generator[Session, None, None]:
-    """Entrega y cierra una sesión."""
+    """Entrega una sesión y la cierra al terminar."""
     session = SessionLocal()
 
     try:
