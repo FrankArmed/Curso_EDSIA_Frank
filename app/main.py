@@ -4,13 +4,9 @@
 
 from fastapi import FastAPI
 
-from app.db import Base, engine
 from app.routers import readings, sensors
 
-# Crea las tablas si todavía no existen.
-Base.metadata.create_all(bind=engine)
-
-# Crea la aplicación de FastAPI.
+# Crea la aplicación principal de FastAPI.
 app = FastAPI(
     title="SensorHub API",
     description="API para administrar sensores y lecturas.",

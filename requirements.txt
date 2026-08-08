@@ -7,3 +7,5 @@ pytest-cov
 httpx2
 ruff
 mypy
+psycopg[binary]
+alembic

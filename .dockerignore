@@ -1,0 +1,40 @@
+# Entorno virtual local
+.venv/
+venv/
+
+# Archivos temp de Python
+__pycache__/
+*.py[cod]
+
+# Cachés y reportes de pruebas
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Control de versiones
+.git/
+.github/
+
+# Configuración y secretos locales
+.env
+.env.*
+
+# Base de datos local
+sensorhub.db
+*.db
+
+# Archivos del editor y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Carpetas históricas y documentación no necesarias en producción
+semana0/
+semana1/
+semana2/
+tests/
+docs/
+assets/

@@ -22,7 +22,7 @@ class SensorRepositoryProtocol(Protocol):
     def delete(self, sensor: Sensor) -> None: ...
 
 
-class ReadingRepositoryProtocol(Protocol):
+class ReadingRepositoryProtocol(Protocol): ##No guarda datos ni ejecuta consultas. Solo define los métodos disponibles. 
     """Operaciones necesarias para lecturas."""
 
     def create(self, reading: Reading) -> Reading: ...
