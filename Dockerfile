@@ -24,5 +24,6 @@ COPY migrations ./migrations
 # Documenta el puerto utilizado por FastAPI.
 EXPOSE 8000
 
-# Inicia la API y permite recibir conexiones externas al contenedor.
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Aplica las migraciones y después inicia la API.
+# PORT viene de Render; localmente se utiliza 8000.
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
