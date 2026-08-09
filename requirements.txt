@@ -5,7 +5,7 @@ pydantic
 pytest
 pytest-cov
 httpx2
-ruff
+ruff==0.15.22
 mypy
 psycopg[binary]
 alembic
