@@ -1,0 +1,44 @@
+name: CI
+
+# Ejecuta el pipeline al enviar cambios a main
+# y también cuando se abre o actualiza un Pull Request.
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+jobs:
+  test:
+    # GitHub prepara una máquina Linux temporal.
+    runs-on: ubuntu-latest
+
+    steps:
+      # Descarga el código del repositorio.
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      # Instala la misma versión de Python usada en Docker.
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Instala todas las dependencias declaradas por el proyecto.
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Revisa errores de estilo y calidad.
+      - name: Ruff
+        run: ruff check app tests
+
+      # Revisa los tipos del código principal.
+      - name: Mypy
+        run: mypy app
+
+      # Ejecuta pytest y exige la cobertura configurada.
+      - name: Tests
+        run: python -m pytest
