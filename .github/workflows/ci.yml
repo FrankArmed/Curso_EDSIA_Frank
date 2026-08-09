@@ -17,11 +17,11 @@ jobs:
     steps:
       # Descarga el código del repositorio.
       - name: Descargar repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Instala la misma versión de Python usada en Docker.
       - name: Configurar Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -33,7 +33,9 @@ jobs:
 
       # Revisa errores de estilo y calidad.
       - name: Ruff
-        run: ruff check app tests
+        run: |
+          ruff --version
+          ruff check app tests
 
       # Revisa los tipos del código principal.
       - name: Mypy
