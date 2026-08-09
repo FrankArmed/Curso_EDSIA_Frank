@@ -294,4 +294,15 @@ sensorhub.db
 
 no se incluye en Git porque está registrado en `.gitignore`.
 
+## Despliegue en producción
+
+SensorHub se encuentra desplegado en Render mediante Docker y PostgreSQL.
+
+- API pública: https://sensorhub-api-frank.onrender.com
+- Health check: https://sensorhub-api-frank.onrender.com/health
+- Swagger: https://sensorhub-api-frank.onrender.com/docs
+
+El despliegue utiliza variables de entorno para la configuración de la
+base de datos y Alembic para aplicar las migraciones antes de iniciar la API.
+
 ## :D
