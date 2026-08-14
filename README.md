@@ -1,70 +1,114 @@
 # Curso EDSIA — Frank Asael Méndez García
 
-Este repositorio contiene las actividades realizadas durante el curso EDSIA.
+[![CI](https://github.com/FrankArmed/Curso_EDSIA_Frank/actions/workflows/ci.yml/badge.svg)](https://github.com/FrankArmed/Curso_EDSIA_Frank/actions/workflows/ci.yml)
 
-Las carpetas `semana0/`, `semana1/` y `semana2/` se conservan como historial.
-Desde la Semana 3, la aplicación principal vive en `app/`.
+Repositorio de trabajo del curso **EDSIA**, enfocado en el desarrollo progresivo de software.
+
+El proyecto comenzó con ejercicios pequeños de Python y diseño de software, y evolucionó hasta **SensorHub**, una API REST con persistencia, pruebas automatizadas, contenedores, integración continua y despliegue en producción.
+
+<p align="center">
+  <img src="gifrecurse.gif" width="200" height="200">
+</p>
 
 ---
 
-# SensorHub API — Semana 3
+## SensorHub API
 
-API REST para administrar sensores y lecturas mediante FastAPI, Pydantic,
-SQLAlchemy y SQLite.
+SensorHub permite administrar sensores y sus lecturas mediante una API construida con FastAPI.
 
-## Funciones principales
+### Producción
 
-- Crear, consultar, actualizar y eliminar sensores.
-- Crear, consultar, actualizar y eliminar lecturas.
-- Validar tipos de sensor, unidades y rangos físicos.
-- Paginar resultados con `offset` y `limit`.
-- Filtrar lecturas por rango de fechas.
-- Mostrar documentación automática en Swagger.
+- **API:** https://sensorhub-api-frank.onrender.com
+- **Health check:** https://sensorhub-api-frank.onrender.com/health
+- **Swagger:** https://sensorhub-api-frank.onrender.com/docs
 
-## Arquitectura
+---
 
-La aplicación utiliza cuatro capas:
+## Progreso del curso
 
-```text
-routers → services → repositories → models
-```
+Las carpetas `semana0/`, `semana1/` y `semana2/` conservan los ejercicios y evaluaciones iniciales. Desde la **Semana 3**, SensorHub se desarrolla como producto dentro de `app/` y los archivos de infraestructura se encuentran en la raíz del repositorio.
 
-- `routers/`: recibe peticiones HTTP y devuelve respuestas.
-- `services/`: contiene las reglas del negocio.
-- `repositories/`: realiza operaciones con la base de datos.
-- `models/`: representa las tablas de SQLAlchemy.
-- `schemas/`: valida la entrada y salida con Pydantic.
+---
 
-La decisión de arquitectura se documenta en:
+## Arquitectura actual
+
+SensorHub utiliza una arquitectura en capas:
 
 ```text
-docs/adr/0001-layered-architecture.md
+Cliente / Swagger
+    Routers
+    Services
+ Repositories
+    Models
+ Base de datos
 ```
+
+Responsabilidades principales:
+
+- `routers/`: recibe las peticiones HTTP y genera las respuestas.
+- `services/`: contiene las reglas y validaciones del negocio.
+- `repositories/`: concentra el acceso a los datos.
+- `models/`: representa las tablas mediante SQLAlchemy.
+- `schemas/`: valida la entrada y salida mediante Pydantic.
+
+La decisión de utilizar esta arquitectura se documenta en `docs/adr/`.
+
+---
+
+## Tecnologías utilizadas
+
+- Python 3.12+
+- FastAPI
+- Pydantic
+- SQLAlchemy 2.x
+- SQLite para ejecución local sencilla
+- PostgreSQL para Docker Compose y producción
+- Alembic para migraciones
+- pytest y pytest-cov
+- Ruff
+- mypy
+- Docker
+- Docker Compose
+- GitHub Actions
+- Render
+
+---
 
 ## Estructura principal
 
 ```text
-app/
-├── main.py
-├── db.py
-├── routers/
-├── services/
-├── repositories/
-├── models/
-└── schemas/
-
-tests/
-docs/adr/
-requirements.txt
-pyproject.toml
+Curso_EDSIA_Frank/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── app/
+│   ├── main.py
+│   ├── db.py
+│   ├── routers/
+│   ├── services/
+│   ├── repositories/
+│   ├── models/
+│   └── schemas/
+├── docs/
+│   └── adr/
+├── migrations/
+│   └── versions/
+├── semana0/
+├── semana1/
+├── semana2/
+├── tests/
+├── AI_LOG.md
+├── alembic.ini
+├── Dockerfile
+├── docker-compose.yml
+├── pyproject.toml
+├── render.yaml
+└── requirements.txt
 ```
 
-## Requisitos
+---
 
-- Python 3.12 o superior.
-- Dependencias indicadas en `requirements.txt`.
-
-## Instalación
+## Instalación local
 
 Desde la raíz del repositorio:
 
@@ -74,33 +118,25 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-## Ejecutar la API
+---
 
-Desde la raíz del repositorio:
+## Ejecutar SensorHub localmente
+
+Sin definir `DATABASE_URL`, la aplicación utiliza SQLite como base local.
 
 ```powershell
 uvicorn app.main:app --reload
 ```
 
-La API estará disponible en:
+Direcciones principales:
 
 ```text
-http://127.0.0.1:8000
+API:      http://127.0.0.1:8000
+Health:   http://127.0.0.1:8000/health
+Swagger:  http://127.0.0.1:8000/docs
 ```
 
-Swagger estará disponible en:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-## Comprobar el estado
-
-```text
-GET /health
-```
-
-Respuesta esperada:
+Respuesta esperada de `/health`:
 
 ```json
 {
@@ -108,203 +144,236 @@ Respuesta esperada:
 }
 ```
 
-## Endpoints de sensores
+---
 
-| Método | Ruta | Descripción |
-|---|---|---|
-| POST | `/sensors` | Crear un sensor |
-| GET | `/sensors` | Listar sensores |
-| GET | `/sensors/{sensor_id}` | Consultar un sensor |
-| PATCH | `/sensors/{sensor_id}` | Actualizar un sensor |
-| DELETE | `/sensors/{sensor_id}` | Eliminar un sensor |
+## Ejecutar con Docker Compose
 
-### Crear un sensor
+Docker Compose levanta:
 
 ```text
-POST /sensors
+api → SensorHub con FastAPI
+db  → PostgreSQL
 ```
 
-Cuerpo de ejemplo:
+Primero crea el archivo local `.env` a partir del ejemplo:
 
-```json
-{
-  "id": "TH-01",
-  "sensor_type": "temperature",
-  "unit": "C"
-}
+```powershell
+Copy-Item .env.example .env
 ```
 
-Respuesta esperada:
+Después:
 
-```text
-201 Created
+```powershell
+docker compose up --build -d
 ```
 
-### Actualizar un sensor
+Comprobar los servicios:
 
-```text
-PATCH /sensors/TH-01
+```powershell
+docker compose ps
 ```
 
-Cuerpo de ejemplo:
+Ver logs:
 
-```json
-{
-  "sensor_type": "humidity",
-  "unit": "%"
-}
+```powershell
+docker compose logs api
 ```
 
-### Listar sensores con paginación
+Detener los contenedores:
 
-```text
-GET /sensors?offset=0&limit=20
+```powershell
+docker compose down
 ```
 
-## Endpoints de lecturas
+Los datos de PostgreSQL se mantienen en un volumen persistente.
 
-| Método | Ruta | Descripción |
-|---|---|---|
-| POST | `/sensors/{sensor_id}/readings` | Crear una lectura |
-| GET | `/sensors/{sensor_id}/readings` | Listar lecturas de un sensor |
-| GET | `/readings/{reading_id}` | Consultar una lectura |
-| PATCH | `/readings/{reading_id}` | Actualizar una lectura |
-| DELETE | `/readings/{reading_id}` | Eliminar una lectura |
+Para eliminar también el volumen de desarrollo:
 
-### Crear una lectura
-
-Primero debe existir el sensor indicado.
-
-```text
-POST /sensors/TH-01/readings
+```powershell
+docker compose down -v
 ```
 
-Cuerpo de ejemplo:
+---
 
-```json
-{
-  "value": 25.5,
-  "unit": "C",
-  "recorded_at": "2026-08-01T10:00:00"
-}
+## Migraciones con Alembic
+
+Las tablas ya no se crean automáticamente al iniciar FastAPI. Alembic administra el esquema mediante migraciones versionadas.
+
+Aplicar todas las migraciones:
+
+```powershell
+alembic upgrade head
 ```
 
-Respuesta esperada:
+Consultar la migración actual:
 
-```text
-201 Created
+```powershell
+alembic current
 ```
 
-### Listar lecturas con paginación
+En Docker y Render, las migraciones se aplican antes de iniciar Uvicorn.
 
-```text
-GET /sensors/TH-01/readings?offset=0&limit=20
-```
+---
 
-### Filtrar lecturas por fechas
+## Endpoints principales
 
-```text
-GET /sensors/TH-01/readings?from=2026-08-01T00:00:00&to=2026-08-01T23:59:59
-```
+### Sensores
 
-### Actualizar una lectura
+| `POST` | `/sensors` | Crear un sensor |
+| `GET` | `/sensors` | Listar sensores |
+| `GET` | `/sensors/{sensor_id}` | Consultar un sensor |
+| `PATCH` | `/sensors/{sensor_id}` | Actualizar un sensor |
+| `DELETE` | `/sensors/{sensor_id}` | Eliminar un sensor |
 
-```text
-PATCH /readings/1
-```
+### Lecturas
 
-Cuerpo de ejemplo:
+| `POST` | `/sensors/{sensor_id}/readings` | Crear una lectura |
+| `GET` | `/sensors/{sensor_id}/readings` | Listar lecturas de un sensor |
+| `GET` | `/readings/{reading_id}` | Consultar una lectura |
+| `PATCH` | `/readings/{reading_id}` | Actualizar una lectura |
+| `DELETE` | `/readings/{reading_id}` | Eliminar una lectura |
 
-```json
-{
-  "value": 30.0
-}
-```
+La API también incluye paginación y filtros de lecturas por rango de fechassss.
 
-### Eliminar una lectura
+---
 
-```text
-DELETE /readings/1
-```
+## Pruebas y calidad
 
-Respuesta esperada:
-
-```text
-204 No Content
-```
-
-## Reglas de validación
-
-| Tipo de sensor | Unidad | Rango permitido |
-|---|---|---|
-| `temperature` | `C` | -40 a 125 |
-| `humidity` | `%` | 0 a 100 |
-
-La API también rechaza:
-
-- Identificadores vacíos.
-- Tipos de sensor desconocidos.
-- Unidades desconocidas.
-- Sensores duplicados.
-- Lecturas asociadas a sensores inexistentes.
-- Rangos de fechas invertidos.
-
-## Códigos HTTP utilizados
-
-| Código | Significado |
-|---|---|
-| 200 | Consulta o actualización correcta |
-| 201 | Recurso creado |
-| 204 | Recurso eliminado |
-| 400 | Rango de fechas incorrecto |
-| 404 | Recurso inexistente |
-| 409 | Sensor duplicado |
-| 422 | Datos que no cumplen las validaciones |
-
-## Ejecutar las pruebas
+Ejecutar la suite:
 
 ```powershell
 python -m pytest
 ```
 
-## Verificar cobertura
+Revisar calidad:
 
 ```powershell
-python -m pytest --cov=app --cov-report=term-missing
-```
-
-La cobertura mínima requerida es de 80 %.
-
-## Verificar calidad
-
-```powershell
-ruff check .
+ruff check app tests
 mypy app
 ```
 
-## Base de datos
+---
 
-La aplicación utiliza SQLite.
+## Integración continua
 
-El archivo local:
+El workflow `.github/workflows/ci.yml` se ejecuta automáticamente en Pull Requests y cambios enviados a `main`.
+
+---
+
+## Despliegue continuo
+
+La infraestructura de producción se define en `render.yaml`.
+
+Render administra:
+
+- un Web Service basado en Docker;
+- una base PostgreSQL;
+- `DATABASE_URL` mediante variables de entorno;
+- `/health` como health check;
+- despliegue automático después de que los checks configurados terminan correctamente.
+
+---
+
+## Seguridad de configuración
+
+El repositorio no debe contener credenciales reales.
+
+La configuración sensible se entrega mediante variables de entorno:
 
 ```text
-sensorhub.db
+DATABASE_URL
+POSTGRES_USER
+POSTGRES_PASSWORD
+POSTGRES_DB
 ```
 
-no se incluye en Git porque está registrado en `.gitignore`.
+El archivo `.env` es únicamente local y permanece ignorado por Git. El repositorio puede incluir `.env.example` porque contiene únicamente valores de ejemploooo.
 
-## Despliegue en producción
+---
 
-SensorHub se encuentra desplegado en Render mediante Docker y PostgreSQL.
+## Trabajo realizado por semana
 
-- API pública: https://sensorhub-api-frank.onrender.com
-- Health check: https://sensorhub-api-frank.onrender.com/health
-- Swagger: https://sensorhub-api-frank.onrender.com/docs
+### Semana 0 — Preparación
 
-El despliegue utiliza variables de entorno para la configuración de la
-base de datos y Alembic para aplicar las migraciones antes de iniciar la API.
+Se configuró el entorno de desarrollo y se verificaron las herramientas principales. También se realizó el primer ejercicio mínimo de sensor acompañado por una prueba automatizada.
 
-## :D
+### Semana 1 — Diseño de software y comunicaciones
 
-Parte modificada unicamente para comprobar el Render
+Se trabajaron conceptos de programación orientada a objetos mediante una máquina de estados y ejemplos de SOLID. Después se desarrolló un pequeño sistema UART con configuración, parsers y persistencia.
+
+Como extensión se incorporaron:
+
+- parser CAN;
+- buffer circular;
+- protección concurrente mediante `Lock`.
+
+### Semana 2 — Scrum y TDD
+
+Se organizó el trabajo mediante Scrum:
+
+- Product Backlog;
+- historias de usuario;
+- criterios Gherkin;
+- prioridades MoSCoW;
+- story points;
+- Sprint Planning;
+- Definition of Done.
+
+El desarrollo principal se realizó mediante TDD con:
+
+- `SensorReading`;
+- `AnomalyDetector`;
+- `AlertManager`;
+- estrategias de alerta por consola y archivo.
+
+### Semana 3 — SensorHub como producto
+
+El proyecto dejó de ser únicamente una colección de ejercicios y pasó a utilizar `app/` como producto principal.
+
+Se incorporaron:
+
+- FastAPI y Swagger;
+- CRUD de sensores y lecturas;
+- esquemas Pydantic;
+- SQLAlchemy 2.x;
+- patrón repositorio;
+- capa de servicios;
+- paginación;
+- filtros por fecha;
+- validaciones físicas;
+- pruebas con `TestClient`;
+- revisión por pares.
+
+### Semana 4 — Docker y CI/CD
+
+SensorHub se preparó para ejecutarse de forma reproducible y desplegarse automáticamente.
+
+Se incorporaron:
+
+- imagen basada en `python:3.12-slim`;
+- Docker Compose;
+- PostgreSQL;
+- volúmenes persistentes;
+- configuración mediante variables de entorno;
+- migraciones con Alembic;
+- GitHub Actions;
+- Ruff, mypy y pytest automáticos;
+- comprobación de construcción de Docker en CI;
+- despliegue público en Render;
+- health checks;
+- despliegue continuo.
+
+---
+
+## Bitácora
+
+`AI_LOG.md` documenta consultas, decisiones, problemas encontrados, correcciones y aprendizajes obtenidos durante el curso.
+
+También se conservan documentos de arquitectura y evidencias relacionadas con revisiones por pares dentro de `docs/`.
+
+---
+
+## Autor
+
+**Frank Asael Méndez García**  
+Ingeniería en Instrumentación Electrónica
