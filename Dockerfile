@@ -21,9 +21,12 @@ COPY app ./app
 COPY alembic.ini .
 COPY migrations ./migrations
 
-# Documenta el puerto utilizado por FastAPI.
+# Puerto utilizado por FastAPI.
 EXPOSE 8000
 
-# Aplica las migraciones y después inicia la API.
-# PORT viene de Render; localmente se utiliza 8000.
+# Comprueba periódicamente que la API responda.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD python -c "import os, urllib.request; urllib.request.urlopen('http://127.0.0.1:' + os.getenv('PORT', '8000') + '/health', timeout=3)" || exit 1
+
+# Aplica migraciones e inicia la API.
 CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

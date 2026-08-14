@@ -7,7 +7,7 @@ services:
     healthCheckPath: /health
 
     # Despliega automáticamente los commits de la rama conectada.
-    autoDeployTrigger: commit
+    autoDeployTrigger: checksPass
 
     # Obtiene la conexión sin guardar credenciales en Git.
     envVars:
