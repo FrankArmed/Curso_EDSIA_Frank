@@ -13,6 +13,7 @@ jobs:
   test:
     # GitHub prepara una máquina Linux temporal.
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       # Descarga el código del repositorio.
@@ -31,16 +32,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Revisa errores de estilo y calidad.
       - name: Ruff
         run: |
           ruff --version
           ruff check app tests
 
-      # Revisa los tipos del código principal.
       - name: Mypy
         run: mypy app
 
-      # Ejecuta pytest y exige la cobertura configurada.
       - name: Tests
         run: python -m pytest
+
+      # Comprueba que el Dockerfile también sea válido.
+      - name: Construir imagen Docker
+        run: docker build -t sensorhub-ci .
