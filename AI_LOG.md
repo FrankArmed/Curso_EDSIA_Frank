@@ -300,3 +300,30 @@ migraciones Alembic, health check y pipeline automático.
 
 **Aprendizaje:** Docker permite reproducir el entorno, CI comprueba los
 cambios y CD automatiza su llegada a producción.
+
+## Semana 5 — Entrada 1: Intento de uso de Aider
+
+**Contexto / objetivo:**  
+Se intentó utilizar Aider para realizar cambios asistidos por IA con
+trazabilidad en Git.
+
+**Proceso realizado:**  
+Se instaló Aider correctamente y se ejecutó dentro del repositorio
+en la rama `week5/aider`. La herramienta detectó el repositorio Git
+y agregó sus archivos locales `.aider*` al `.gitignore`.
+
+**Resultado:**  
+Aider inició correctamente, pero no encontró un modelo LLM ni una
+API key configurada. La herramienta ofreció utilizar OpenRouter para
+conectar un modelo externo.
+
+**Decisión técnica:**  
+No se configuró una nueva cuenta ni una API key externa. Se decidió
+utilizar GitHub Copilot Chat como alternativa para realizar el cambio
+asistido, manteniendo la trazabilidad mediante commits manuales.
+
+**Aprendizaje:**  
+Aider puede modificar archivos y registrar automáticamente sus cambios
+en Git, pero necesita acceso a un modelo externo. La herramienta de IA
+no forma parte de las dependencias de ejecución de SensorHub y debe
+mantenerse separada del entorno de producción.
