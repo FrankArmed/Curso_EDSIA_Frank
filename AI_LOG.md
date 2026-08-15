@@ -282,3 +282,21 @@ de anomalía.
 **Aprendizaje:**  
 La cobertura alta no garantiza que todos los comportamientos sean
 correctos; las pruebas manuales permitieron detectar un caso no validado.
+
+git add docs\semana4_cierre.md AI_LOG.md
+git commit -m "docs: cerrar revision de la semana 4"
+git push -u origin docs/cierre-semana4
+
+## Cierre Semana 4
+
+**Consulta:** Revisión final de Docker, PostgreSQL, CI/CD y Render.
+
+**Decisión:** Se mantuvo una solución sencilla basada en Docker Compose,
+GitHub Actions y Render, evitando extensiones innecesarias para el alcance
+actual.
+
+**Resultado:** SensorHub quedó desplegado públicamente con PostgreSQL,
+migraciones Alembic, health check y pipeline automático.
+
+**Aprendizaje:** Docker permite reproducir el entorno, CI comprueba los
+cambios y CD automatiza su llegada a producción.
