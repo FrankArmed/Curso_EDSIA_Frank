@@ -94,3 +94,32 @@ def test_reading_service_rejects_invalid_value() -> None:  ##Apartado hecho con 
                 unit="C",
             ),
         )
+
+
+##Apartado extra.
+def test_reading_service_rejects_unknown_sensor_type() -> None:
+    """Debe rechazar un tipo de sensor no soportado."""
+    sensor_repository = FakeSensorRepository()
+    reading_repository = FakeReadingRepository()
+
+    sensor_repository.create(
+        Sensor(
+            id="PR-01",
+            sensor_type="pressure",
+            unit="C",
+        )
+    )
+
+    service = ReadingService(
+        reading_repository,
+        sensor_repository,
+    )
+
+    with pytest.raises(InvalidReadingError):
+        service.create_reading(
+            "PR-01",
+            ReadingCreate(
+                value=20.0,
+                unit="C",
+            ),
+        )

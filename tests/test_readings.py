@@ -323,3 +323,81 @@ def test_reject_unknown_unit(client: TestClient) -> None:
     )
 
     assert response.status_code == 422
+
+
+##Apartado extra.
+def test_reject_future_date_on_create(
+    client: TestClient,
+) -> None:
+    """Debe rechazar una lectura con fecha futura."""
+    create_sensor(client)
+
+    response = client.post(
+        "/sensors/TH-01/readings",
+        json={
+            "value": 25.0,
+            "unit": "C",
+            "recorded_at": "2100-01-01T10:00:00",
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_reject_future_date_on_update(
+    client: TestClient,
+) -> None:
+    """Debe rechazar una fecha futura al actualizar."""
+    create_sensor(client)
+
+    reading_id = create_reading(
+        client,
+        "TH-01",
+        25.0,
+        "2026-07-30T10:00:00",
+    )
+
+    response = client.patch(
+        f"/readings/{reading_id}",
+        json={
+            "recorded_at": "2100-01-01T10:00:00",
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_reject_negative_offset(
+    client: TestClient,
+) -> None:
+    """Debe rechazar un offset negativo."""
+    response = client.get(
+        "/sensors/TH-01/readings",
+        params={"offset": -1},
+    )
+
+    assert response.status_code == 422
+
+
+def test_reject_zero_limit(
+    client: TestClient,
+) -> None:
+    """Debe rechazar un limit igual a cero."""
+    response = client.get(
+        "/sensors/TH-01/readings",
+        params={"limit": 0},
+    )
+
+    assert response.status_code == 422
+
+
+def test_reject_limit_above_maximum(
+    client: TestClient,
+) -> None:
+    """Debe rechazar un limit mayor a cien."""
+    response = client.get(
+        "/sensors/TH-01/readings",
+        params={"limit": 101},
+    )
+
+    assert response.status_code == 422

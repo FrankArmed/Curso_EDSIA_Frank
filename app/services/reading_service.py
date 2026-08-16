@@ -1,6 +1,6 @@
-"""Reglas relacionadas con las lecturas."""
+"""Lista lecturas con paginación y filtros de fecha."""
 
-# Frank Asael Méndez García - 01/08/2026
+# Frank Asael Méndez García - 15/08/2026
 
 from datetime import datetime
 
@@ -69,11 +69,28 @@ class ReadingService:
                     "La temperatura debe estar entre -40 y 125"
                 )
 
-        if sensor.sensor_type == "humidity":
+        elif sensor.sensor_type == "humidity":
             if value < 0 or value > 100:
                 raise InvalidReadingError(
                     "La humedad debe estar entre 0 y 100"
                 )
+
+        else:
+            raise InvalidReadingError(
+                "Tipo de sensor no soportado"
+            )
+
+    def _validate_recorded_at(
+        self,
+        recorded_at: datetime,
+    ) -> None:
+        """Rechaza fechas futuras."""
+        now = datetime.now(tz=recorded_at.tzinfo)
+
+        if recorded_at > now:
+            raise InvalidReadingError(
+                "La fecha de la lectura no puede ser futura"
+            )
 
     def create_reading(
         self,
@@ -96,6 +113,7 @@ class ReadingService:
         )
 
         if data.recorded_at is not None:
+            self._validate_recorded_at(data.recorded_at)
             reading.recorded_at = data.recorded_at
 
         return self.reading_repository.create(reading)
@@ -111,7 +129,7 @@ class ReadingService:
 
         return reading
 
-    def list_for_sensor( ##Apartado realizado con ayuda de la IA. Se agregó la función list_for_sensor para listar las lecturas de un sensor con paginación y filtrado por fechas. 
+    def list_for_sensor( ##Se agregó la función list_for_sensor para listar las lecturas de un sensor con paginación y filtrado por fechas. 
         self,
         sensor_id: str,
         offset: int,
@@ -167,6 +185,7 @@ class ReadingService:
         reading.unit = new_unit
 
         if data.recorded_at is not None:
+            self._validate_recorded_at(data.recorded_at)
             reading.recorded_at = data.recorded_at
 
         return self.reading_repository.save(reading)
