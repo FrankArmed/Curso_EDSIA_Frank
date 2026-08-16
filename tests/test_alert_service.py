@@ -2,7 +2,7 @@
 
 # Frank Asael Méndez García - 15/08/2026
 
-from app.models import Reading, Sensor
+from app.models import Alert, Reading, Sensor
 from app.services.alert_service import AlertService
 
 
@@ -10,9 +10,9 @@ class FakeAlertRepository:
     """Guarda alertas en memoria para las pruebas."""
 
     def __init__(self) -> None:
-        self.alerts: list[object] = []
+        self.alerts: list[Alert] = []
 
-    def create(self, alert: object) -> object:
+    def create(self, alert: Alert) -> Alert:
         """Guarda una alerta sin utilizar base de datos."""
         self.alerts.append(alert)
         return alert
@@ -24,7 +24,7 @@ class FakeNotificationStrategy:
     def __init__(self) -> None:
         self.was_notified = False
 
-    def notify(self, alert: object) -> None:
+    def notify(self, alert: Alert) -> None:
         """Marca que recibió una alerta."""
         self.was_notified = True
 

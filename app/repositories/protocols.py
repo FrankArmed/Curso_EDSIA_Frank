@@ -5,7 +5,7 @@
 from datetime import datetime
 from typing import Protocol
 
-from app.models import Reading, Sensor
+from app.models import Alert, Reading, Sensor
 
 
 class SensorRepositoryProtocol(Protocol):
@@ -41,3 +41,9 @@ class ReadingRepositoryProtocol(Protocol): ##No guarda datos ni ejecuta consulta
     def save(self, reading: Reading) -> Reading: ...
 
     def delete(self, reading: Reading) -> None: ...
+
+
+class AlertRepositoryProtocol(Protocol):
+    """Operaciones necesarias para alertas."""
+
+    def create(self, alert: Alert) -> Alert: ...
