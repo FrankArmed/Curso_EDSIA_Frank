@@ -357,3 +357,25 @@ El análisis de IA puede encontrar casos borde útiles, pero también
 puede ignorar contexto existente y proponer validaciones duplicadas.
 Cada recomendación debe comprobarse contra el código y mediante tests
 antes de implementarse.
+
+## Semana 5 — Entrada 3: Decisión de arquitectura
+
+**Contexto / objetivo:**  
+Se revisaron los conceptos de microservicios y Monolith First para
+evaluar si SensorHub debería cambiar su arquitectura actual.
+
+**Uso de IA:**  
+Se utilizó IA como apoyo para ordenar las ideas y preparar un borrador
+del ADR.
+
+**Decisión propia:**  
+Se decidió mantener SensorHub como arquitectura en capas. 
+El proyecto todavía no requiere despliegues o escalado
+independiente por componente.
+
+**Resultado:**  
+Se actualizó el ADR 0001 y demás archivos.
+
+**Aprendizaje:**  
+Una arquitectura más compleja no es necesariamente mejor. La decisión
+debe responder a una necesidad real del proyecto.
