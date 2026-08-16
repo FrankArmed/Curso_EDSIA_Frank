@@ -40,6 +40,7 @@ def test_create_sensor(client: TestClient) -> None:
         "id": "TH-01",
         "sensor_type": "temperature",
         "unit": "C",
+        "alert_threshold": None,
     }
 
 

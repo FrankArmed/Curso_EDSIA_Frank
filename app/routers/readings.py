@@ -17,6 +17,9 @@ from app.db import get_db
 from app.models import Reading
 from app.repositories.reading_repository import ReadingRepository
 from app.repositories.sensor_repository import SensorRepository
+from app.repositories.alert_repository import AlertRepository
+from app.services.alert_service import AlertService
+from app.services.notification import ConsoleNotificationStrategy
 from app.schemas.reading import (
     ReadingCreate,
     ReadingResponse,
@@ -43,6 +46,14 @@ def create_service(session: Session) -> ReadingService:
         sensor_repository,
     )
 
+def create_alert_service(
+    session: Session,
+) -> AlertService:
+    """Crea el servicio encargado de las alertas."""
+    repository = AlertRepository(session)
+    notifier = ConsoleNotificationStrategy()
+
+    return AlertService(repository, notifier)
 
 @router.post(
     "/sensors/{sensor_id}/readings",
@@ -58,7 +69,14 @@ def create_reading(
     service = create_service(session)
 
     try:
-        return service.create_reading(sensor_id, data)
+        reading = service.create_reading(sensor_id, data)
+
+        sensor = service.get_sensor(sensor_id)
+
+        alert_service = create_alert_service(session)
+        alert_service.evaluate(sensor, reading)
+
+        return reading
     except SensorNotFoundError as error:
         raise HTTPException(404, str(error)) from error
     except InvalidReadingError as error:

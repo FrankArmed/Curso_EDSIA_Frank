@@ -60,6 +60,7 @@ class SensorService:
             id=data.id,
             sensor_type=data.sensor_type,
             unit=data.unit,
+            alert_threshold=data.alert_threshold,
         )
 
         return self.repository.create(sensor)
@@ -104,6 +105,9 @@ class SensorService:
 
         sensor.sensor_type = new_type
         sensor.unit = new_unit
+
+        if data.alert_threshold is not None:
+            sensor.alert_threshold = data.alert_threshold
 
         return self.repository.save(sensor)
 

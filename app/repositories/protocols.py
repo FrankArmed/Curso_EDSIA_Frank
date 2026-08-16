@@ -47,3 +47,9 @@ class AlertRepositoryProtocol(Protocol):
     """Operaciones necesarias para alertas."""
 
     def create(self, alert: Alert) -> Alert: ...
+
+    def list_all(
+        self,
+        offset: int,
+        limit: int,
+    ) -> list[Alert]: ...

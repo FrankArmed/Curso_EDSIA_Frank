@@ -50,3 +50,14 @@ class AlertService:
         self.notification_strategy.notify(saved_alert)
 
         return saved_alert
+
+    def list_alerts(
+        self,
+        offset: int,
+        limit: int,
+    ) -> list[Alert]:
+        """Devuelve las alertas almacenadas."""
+        return self.alert_repository.list_all(
+            offset,
+            limit,
+        )
