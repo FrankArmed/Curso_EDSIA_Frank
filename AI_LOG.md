@@ -287,7 +287,7 @@ git add docs\semana4_cierre.md AI_LOG.md
 git commit -m "docs: cerrar revision de la semana 4"
 git push -u origin docs/cierre-semana4
 
-## Cierre Semana 4
+# Cierre Semana 4
 
 **Consulta:** Revisión final de Docker, PostgreSQL, CI/CD y Render.
 
@@ -301,7 +301,7 @@ migraciones Alembic, health check y pipeline automático.
 **Aprendizaje:** Docker permite reproducir el entorno, CI comprueba los
 cambios y CD automatiza su llegada a producción.
 
-## Semana 5 — Entrada 1: Intento de uso de Aider
+# Semana 5 — Entrada 1: Intento de uso de Aider
 
 **Contexto / objetivo:**  
 Se intentó utilizar Aider para realizar cambios asistidos por IA con
@@ -327,3 +327,33 @@ Aider puede modificar archivos y registrar automáticamente sus cambios
 en Git, pero necesita acceso a un modelo externo. La herramienta de IA
 no forma parte de las dependencias de ejecución de SensorHub y debe
 mantenerse separada del entorno de producción.
+
+## Entrada 2: Code review asistido por IA
+
+**Contexto / objetivo:**  
+Se utilizó GitHub Copilot para realizar un code review de
+`app/services/reading_service.py`, buscando casos borde,
+validaciones faltantes, seguridad y mantenibilidad.
+
+**Resultado producido por la IA:**  
+Copilot identificó ocho posibles mejoras relacionadas con tipos de
+sensores, paginación, fechas, identificadores y responsabilidades.
+
+**Veredicto propio:**  
+No se aceptaron automáticamente todos los hallazgos. Algunas
+observaciones ya estaban resueltas en otras capas. Por ejemplo,
+FastAPI ya restringía `offset` y `limit`, lo cual se confirmó mediante
+nuevas pruebas.
+
+Se aceptaron las recomendaciones relacionadas con tipos de sensores
+no soportados, fechas futuras y limpieza de comentarios de producción.
+
+**Pruebas agregadas:**  
+Se incorporaron seis tests nuevos para validar tipos desconocidos,
+fechas futuras y límites de paginación.
+
+**Aprendizaje:**  
+El análisis de IA puede encontrar casos borde útiles, pero también
+puede ignorar contexto existente y proponer validaciones duplicadas.
+Cada recomendación debe comprobarse contra el código y mediante tests
+antes de implementarse.
