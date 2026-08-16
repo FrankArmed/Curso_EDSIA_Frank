@@ -13,6 +13,8 @@ from app.db import Base, get_database_url
 from app.models.reading import Reading  # noqa: F401
 from app.models.sensor import Sensor  # noqa: F401
 
+from app.models.alert import Alert  # noqa: F401
+
 config.set_main_option("sqlalchemy.url", get_database_url())
 
 if config.config_file_name is not None:

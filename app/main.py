@@ -4,7 +4,7 @@
 
 from fastapi import FastAPI
 
-from app.routers import readings, sensors
+from app.routers import alerts, readings, sensors
 
 # Crea la aplicación principal de FastAPI.
 app = FastAPI(
@@ -16,6 +16,7 @@ app = FastAPI(
 # Agrega los endpoints de sensores y lecturas.
 app.include_router(sensors.router)
 app.include_router(readings.router)
+app.include_router(alerts.router)
 
 
 @app.get("/health", tags=["health"])

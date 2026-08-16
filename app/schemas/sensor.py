@@ -11,6 +11,7 @@ class SensorCreate(BaseModel):
     id: str = Field(min_length=1, max_length=50)
     sensor_type: str = Field(min_length=1, max_length=20)
     unit: str = Field(min_length=1, max_length=10)
+    alert_threshold: float | None = None
 
     @field_validator("sensor_type")
     @classmethod
@@ -44,6 +45,7 @@ class SensorUpdate(BaseModel):
         min_length=1,
         max_length=10,
     )
+    alert_threshold: float | None = None
 
     @field_validator("sensor_type")
     @classmethod
