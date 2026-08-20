@@ -34,11 +34,20 @@ class AlertService:
         if reading.value <= threshold:
             return None
 
+        difference = reading.value - threshold
+
+        level = "WARNING"
+
+        if difference >= 10:
+            level = "CRITICAL"
+
         alert = Alert(
             sensor_id=sensor.id,
             reading_id=reading.id,
             value=reading.value,
             threshold=threshold,
+            level=level,
+            status="open",
             message=(
                 f"Lectura {reading.value} {reading.unit} "
                 f"supera el umbral {threshold} {sensor.unit}"

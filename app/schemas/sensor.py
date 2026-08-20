@@ -1,6 +1,6 @@
 """Esquemas de entrada y salida para sensores."""
 
-# Frank Asael Méndez García - 01/08/2026
+# Frank Asael Méndez García - 20/08/2026
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -11,6 +11,8 @@ class SensorCreate(BaseModel):
     id: str = Field(min_length=1, max_length=50)
     sensor_type: str = Field(min_length=1, max_length=20)
     unit: str = Field(min_length=1, max_length=10)
+    location: str = Field(default="sin especificar", min_length=1, max_length=50)
+    is_active: bool = True
     alert_threshold: float | None = None
 
     @field_validator("sensor_type")
@@ -45,6 +47,12 @@ class SensorUpdate(BaseModel):
         min_length=1,
         max_length=10,
     )
+    location: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=100,
+    )
+    is_active: bool | None = None
     alert_threshold: float | None = None
 
     @field_validator("sensor_type")

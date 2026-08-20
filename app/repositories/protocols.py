@@ -22,7 +22,7 @@ class SensorRepositoryProtocol(Protocol):
     def delete(self, sensor: Sensor) -> None: ...
 
 
-class ReadingRepositoryProtocol(Protocol): ##No guarda datos ni ejecuta consultas. Solo define los métodos disponibles. 
+class ReadingRepositoryProtocol(Protocol):  ## No guarda datos ni ejecuta consultas. Solo define los métodos disponibles.
     """Operaciones necesarias para lecturas."""
 
     def create(self, reading: Reading) -> Reading: ...
@@ -42,6 +42,12 @@ class ReadingRepositoryProtocol(Protocol): ##No guarda datos ni ejecuta consulta
 
     def delete(self, reading: Reading) -> None: ...
 
+    def get_statistics(
+        self,
+        sensor_id: str,
+    ) -> dict[str, float | int | None]:
+        """Obtiene estadísticas de las lecturas de un sensor."""
+        ...
 
 class AlertRepositoryProtocol(Protocol):
     """Operaciones necesarias para alertas."""

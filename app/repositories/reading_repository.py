@@ -72,3 +72,32 @@ class ReadingRepository:
         """Elimina una lectura."""
         self.session.delete(reading)
         self.session.commit()
+
+    def get_statistics(self, sensor_id: str) -> dict:
+        """Calcula estadísticas de las lecturas de un sensor."""
+        readings = self.list_for_sensor(
+            sensor_id,
+            0,
+            10000,
+            None,
+            None,
+        )
+
+        values = [reading.value for reading in readings]
+
+        if not values:
+            return {
+                "sensor_id": sensor_id,
+                "count": 0,
+                "minimum": None,
+                "maximum": None,
+                "average": None,
+            }
+
+        return {
+            "sensor_id": sensor_id,
+            "count": len(values),
+            "minimum": min(values),
+            "maximum": max(values),
+            "average": sum(values) / len(values),
+        }

@@ -60,6 +60,8 @@ class SensorService:
             id=data.id,
             sensor_type=data.sensor_type,
             unit=data.unit,
+            location=data.location,
+            is_active=data.is_active,
             alert_threshold=data.alert_threshold,
         )
 
@@ -105,6 +107,12 @@ class SensorService:
 
         sensor.sensor_type = new_type
         sensor.unit = new_unit
+
+        if data.location is not None:
+            sensor.location = data.location
+
+        if data.is_active is not None:
+            sensor.is_active = data.is_active
 
         if data.alert_threshold is not None:
             sensor.alert_threshold = data.alert_threshold

@@ -41,6 +41,8 @@ def test_create_sensor(client: TestClient) -> None:
         "sensor_type": "temperature",
         "unit": "C",
         "alert_threshold": None,
+        "location": "sin especificar",
+        "is_active": True,
     }
 
 

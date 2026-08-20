@@ -25,6 +25,7 @@ from app.schemas.reading import (
     ReadingResponse,
     ReadingUpdate,
 )
+from app.schemas.statistics import ReadingStatistics
 from app.services.reading_service import (
     InvalidDateRangeError,
     InvalidReadingError,
@@ -117,6 +118,21 @@ def list_readings(
     except InvalidDateRangeError as error:
         raise HTTPException(400, str(error)) from error
 
+@router.get(
+    "/sensors/{sensor_id}/statistics",
+    response_model=ReadingStatistics,
+)
+def get_statistics(
+    sensor_id: str,
+    session: Session = Depends(get_db),
+) -> dict:
+    """Devuelve estadísticas de las lecturas."""
+    service = create_service(session)
+
+    try:
+        return service.get_statistics(sensor_id)
+    except SensorNotFoundError as error:
+        raise HTTPException(404, str(error)) from error
 
 @router.get(  ##Apartado realizado con ayuda de la IA. Se agregó la función get_reading para consultar una lectura por su ID.
     "/readings/{reading_id}",

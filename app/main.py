@@ -23,3 +23,8 @@ app.include_router(alerts.router)
 def health() -> dict[str, str]:
     """Comprueba que la API está funcionando."""
     return {"status": "ok"}
+
+@app.get("/metrics", tags=["metrics"])
+def metrics() -> dict[str, int]:
+    """Devuelve métricas básicas de la API."""
+    return {"requests_total": 0}

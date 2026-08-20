@@ -3,6 +3,7 @@
 # Frank Asael Méndez García - 15/08/2026
 
 from datetime import datetime
+from typing import Any
 
 from app.models import Reading, Sensor
 from app.repositories.protocols import (
@@ -194,3 +195,7 @@ class ReadingService:
         """Elimina una lectura."""
         reading = self.get_reading(reading_id)
         self.reading_repository.delete(reading)
+
+    def get_statistics(self, sensor_id: str) -> dict[str, Any]:
+        """Obtiene las estadísticas de las lecturas de un sensor."""
+        return self.reading_repository.get_statistics(sensor_id)
