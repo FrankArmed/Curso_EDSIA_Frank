@@ -1,4 +1,4 @@
-"""Pruebas de integración de la API."""
+"""Pruebas de integración de la API (test api)."""
 # Frank Asael Méndez García - 18/07/2026
 
 from fastapi.testclient import TestClient

@@ -1,4 +1,4 @@
-"""Endpoints relacionados con los sensores."""
+"""Endpoints relacionados con los sensores (Routers - sensors)."""
 
 # Frank Asael Méndez García - 01/08/2026
 

@@ -1,14 +1,14 @@
-"""Endpoints para consultar alertas."""
+"""Endpoints para consultar y actualizar alertas."""
 
-# Frank Asael Méndez García - 15/08/2026
+# Frank Asael Méndez García - 20/08/2026
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app.models import Alert
 from app.repositories.alert_repository import AlertRepository
-from app.schemas.alert import AlertResponse
+from app.schemas.alert import AlertResponse, AlertUpdate
 from app.services.alert_service import AlertService
 from app.services.notification import ConsoleNotificationStrategy
 
@@ -29,14 +29,41 @@ def get_alert_service(
     return AlertService(repository, notifier)
 
 
-@router.get(
-    "",
-    response_model=list[AlertResponse],
-)
+@router.get("", response_model=list[AlertResponse])
 def list_alerts(
-    offset: int = Query(default=0, ge=0),
-    limit: int = Query(default=20, ge=1, le=100),
-    service: AlertService = Depends(get_alert_service),
+    status: str | None = Query(default=None),
+    session: Session = Depends(get_db),
 ) -> list[Alert]:
     """Devuelve las alertas registradas."""
-    return service.list_alerts(offset, limit)
+    repository = AlertRepository(session)
+
+    if status is None:
+        return repository.list_all(0, 100)
+
+    alerts = repository.list_all(0, 100)
+    return [alert for alert in alerts if alert.status == status]
+
+
+@router.patch(
+    "/{alert_id}",
+    response_model=AlertResponse,
+)
+def update_alert(
+    alert_id: int,
+    data: AlertUpdate,
+    session: Session = Depends(get_db),
+) -> Alert:
+    """Actualiza el estado de una alerta."""
+    alert = session.get(Alert, alert_id)
+
+    if alert is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Alerta no encontrada",
+        )
+
+    alert.status = data.status
+    session.commit()
+    session.refresh(alert)
+
+    return alert
