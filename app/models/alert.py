@@ -31,6 +31,12 @@ class Alert(Base):
     threshold: Mapped[float]
     message: Mapped[str] = mapped_column(String(200))
 
+    level: Mapped[str] = mapped_column(String(20))
+    status: Mapped[str] = mapped_column(
+        String(20),
+        default="open",
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         default=lambda: datetime.now(timezone.utc)
     )
